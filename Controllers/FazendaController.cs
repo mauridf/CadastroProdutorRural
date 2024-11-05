@@ -1,6 +1,7 @@
 ﻿using CadastroProdutorRural.Models;
 using CadastroProdutorRural.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CadastroProdutorRural.Controllers;
 
@@ -27,6 +28,10 @@ public class FazendaController : ControllerBase
 
             return Ok("Fazenda cadastrada com sucesso!");
         }
+        catch (ArgumentException argEx)
+        {
+            return BadRequest($"Erro de argumento: {argEx.Message}");
+        }
         catch (Exception ex)
         {
             return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -41,6 +46,10 @@ public class FazendaController : ControllerBase
         {
             var fazendas = await _fazendaService.BuscarTodasFazendas();
             return Ok(fazendas);
+        }
+        catch (ArgumentException argEx)
+        {
+            return BadRequest($"Erro de argumento: {argEx.Message}");
         }
         catch (Exception ex)
         {
@@ -60,6 +69,10 @@ public class FazendaController : ControllerBase
 
             return Ok(fazenda);
         }
+        catch (ArgumentException argEx)
+        {
+            return BadRequest($"Erro de argumento: {argEx.Message}");
+        }
         catch (Exception ex)
         {
             return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -67,16 +80,25 @@ public class FazendaController : ControllerBase
     }
 
     // Endpoint para atualizar uma Fazenda
-    [HttpPut("atualizar")]
-    public async Task<IActionResult> Update([FromBody] Fazenda fazenda)
+    [HttpPut("atualizar/{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] Fazenda fazenda)
     {
         try
         {
+            fazenda.Id = id;
             var result = await _fazendaService.Update(fazenda);
             if (!result)
                 return NotFound("Fazenda não encontrada.");
 
             return Ok("Fazenda atualizada com sucesso!");
+        }
+        catch (DbUpdateException dbEx)
+        {
+            return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+        }
+        catch (ArgumentException argEx)
+        {
+            return BadRequest($"Erro de argumento: {argEx.Message}");
         }
         catch (Exception ex)
         {
@@ -95,6 +117,10 @@ public class FazendaController : ControllerBase
                 return NotFound("Fazenda não encontrada.");
 
             return Ok("Fazenda deletada com sucesso!");
+        }
+        catch (ArgumentException argEx)
+        {
+            return BadRequest($"Erro de argumento: {argEx.Message}");
         }
         catch (Exception ex)
         {

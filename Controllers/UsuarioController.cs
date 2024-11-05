@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CadastroProdutorRural.Models;
 using CadastroProdutorRural.Services;
 using Microsoft.EntityFrameworkCore;
+using CadastroProdutorRural.Requests;
 
 namespace CadastroProdutorRural.Controllers;
 
@@ -96,14 +97,14 @@ public class UsuarioController : ControllerBase
 
     // Endpoint para login
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromQuery] string email, [FromQuery] string senha)
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
         try
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
+            if (string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.SenhaHash))
                 return BadRequest("Email e senha são obrigatórios.");
 
-            var token = await _usuarioService.Login(email, senha);
+            var token = await _usuarioService.Login(loginRequest.Email, loginRequest.SenhaHash);
             if (token != null)
             {
                 return Ok(new { Token = token });
@@ -125,7 +126,7 @@ public class UsuarioController : ControllerBase
     }
 
     // Novo endpoint para buscar um usuário pelo email
-    [HttpGet("buscar-por-email")]
+    [HttpGet("buscar-por-email/{email}")]
     public async Task<IActionResult> GetUsuarioByEmail(string email)
     {
         try

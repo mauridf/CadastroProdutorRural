@@ -1,6 +1,7 @@
 ﻿using CadastroProdutorRural.Models;
 using CadastroProdutorRural.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CadastroProdutorRural.Controllers
 {
@@ -24,6 +25,14 @@ namespace CadastroProdutorRural.Controllers
                 var result = await _culturaService.CadastrarCultura(cultura);
                 return Ok("Cultura cadastrada com sucesso!");
             }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -38,6 +47,14 @@ namespace CadastroProdutorRural.Controllers
             {
                 var culturas = await _culturaService.BuscarTodos();
                 return Ok(culturas);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
             }
             catch (Exception ex)
             {
@@ -57,6 +74,14 @@ namespace CadastroProdutorRural.Controllers
 
                 return Ok(cultura);
             }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -64,16 +89,25 @@ namespace CadastroProdutorRural.Controllers
         }
 
         // Endpoint para atualizar uma Cultura
-        [HttpPut("atualizar")]
-        public async Task<IActionResult> Update([FromBody] Cultura cultura)
+        [HttpPut("atualizar/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Cultura cultura)
         {
             try
             {
+                cultura.Id = id;
                 var result = await _culturaService.Update(cultura);
                 if (!result)
                     return NotFound("Cultura não encontrada.");
 
                 return Ok("Cultura atualizada com sucesso!");
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
             }
             catch (Exception ex)
             {
@@ -92,6 +126,14 @@ namespace CadastroProdutorRural.Controllers
                     return NotFound("Cultura não encontrada.");
 
                 return Ok("Cultura deletada com sucesso!");
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
             }
             catch (Exception ex)
             {

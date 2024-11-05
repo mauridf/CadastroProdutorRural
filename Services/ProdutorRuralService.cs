@@ -99,13 +99,19 @@ public class ProdutorRuralService
     // Métodos para validação de CPF e CNPJ
     private bool ValidarCPF(string cpf)
     {
-        // Lógica para validação de CPF
-        return Regex.IsMatch(cpf, @"^\d{11}$"); // Exemplo simples
+        // Remove qualquer caractere que não seja número
+        cpf = Regex.Replace(cpf, @"[^\d]", "");
+
+        // Valida se o CPF tem 11 dígitos após remover a máscara
+        return Regex.IsMatch(cpf, @"^\d{11}$");
     }
 
     private bool ValidarCNPJ(string cnpj)
     {
-        // Lógica para validação de CNPJ
-        return Regex.IsMatch(cnpj, @"^\d{14}$"); // Exemplo simples
+        // Remove qualquer caractere que não seja número
+        cnpj = Regex.Replace(cnpj, @"[^\d]", "");
+
+        // Valida se o CNPJ tem 14 dígitos após remover a máscara
+        return Regex.IsMatch(cnpj, @"^\d{14}$");
     }
 }

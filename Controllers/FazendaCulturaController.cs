@@ -1,6 +1,7 @@
 ﻿using CadastroProdutorRural.Models;
 using CadastroProdutorRural.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CadastroProdutorRural.Controllers
 {
@@ -24,6 +25,14 @@ namespace CadastroProdutorRural.Controllers
                 await _fazendaCulturaService.CadastrarFazendaCultura(fazendaCultura);
                 return Ok("FazendaCultura cadastrada com sucesso!");
             }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -38,6 +47,14 @@ namespace CadastroProdutorRural.Controllers
             {
                 var fazendaCulturas = await _fazendaCulturaService.BuscarTodos();
                 return Ok(fazendaCulturas);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
             }
             catch (Exception ex)
             {
@@ -57,6 +74,14 @@ namespace CadastroProdutorRural.Controllers
 
                 return Ok(fazendaCultura);
             }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -75,6 +100,14 @@ namespace CadastroProdutorRural.Controllers
 
                 return Ok("FazendaCultura atualizada com sucesso!");
             }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
@@ -92,6 +125,14 @@ namespace CadastroProdutorRural.Controllers
                     return NotFound("FazendaCultura não encontrada.");
 
                 return Ok("FazendaCultura deletada com sucesso!");
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, $"Erro ao salvar no banco de dados: {dbEx.Message}");
+            }
+            catch (ArgumentException argEx)
+            {
+                return BadRequest($"Erro de argumento: {argEx.Message}");
             }
             catch (Exception ex)
             {

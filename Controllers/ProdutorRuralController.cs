@@ -141,11 +141,12 @@ public class ProdutorRuralController : ControllerBase
     }
 
     // Endpoint para atualizar um Produtor Rural
-    [HttpPut("atualizar")]
-    public async Task<IActionResult> Update([FromBody] ProdutorRural produtor)
+    [HttpPut("atualizar/{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] ProdutorRural produtor)
     {
         try
         {
+            produtor.Id = id;
             var result = await _produtorRuralService.Update(produtor);
             if (result)
                 return Ok("Produtor Rural atualizado com sucesso!");

@@ -7,13 +7,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona a configuração de CORS
+// Adicionar a política de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:3000") // Substitua pela URL do frontend (React, Angular)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 // Adiciona o contexto do banco de dados
@@ -54,7 +57,20 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 // Adiciona os serviços de controlador
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "API Cadastro de Produtor Rural",
+        Version = "v1",
+        Description = "API para Cadastro de Produtores Rurais.",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Maurício Dias de Carvalho Oliveira",
+            Email = "mauridf@gmail.com",
+        },
+    });
+});
 
 var app = builder.Build();
 
@@ -67,8 +83,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Ativa o CORS
-app.UseCors("AllowAllOrigins");
+// Use a política de CORS
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication(); // Deve vir antes do UseAuthorization
 app.UseAuthorization();
